@@ -20,6 +20,10 @@ public class ConferenceRoomRepository : IConferenceRoomRepository
     }
     public async Task<ConferenceRoom> Create(ConferenceRoom conferenceRoom)
     {
+        if (conferenceRoom.MaxCapacity > 50)
+        {
+            throw new ArgumentException("The Number of the attendees cannot exceed 50 persons");
+        }
         await _context.ConferenceRooms.AddAsync(conferenceRoom);
        await _context.SaveChangesAsync();
         return (conferenceRoom);

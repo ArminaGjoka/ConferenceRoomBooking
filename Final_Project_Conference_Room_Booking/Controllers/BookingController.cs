@@ -16,7 +16,7 @@ namespace Final_Project_Conference_Room_Booking.Controllers
         public BookingController(IBookingService bookingService, IConferenceRoomService conferenceRoomService)
         {
             _bookingService = bookingService;
-            _conferenceRoomService = conferenceRoomService; 
+            _conferenceRoomService = conferenceRoomService;
         }
 
         public async Task<ActionResult> Index()
@@ -31,7 +31,8 @@ namespace Final_Project_Conference_Room_Booking.Controllers
             ViewBag.ConferenceRoomList = conferenceRoomList; // ViewBag i dergon cRooms tek View
             return View();
         }
-        public async Task<IActionResult> Edit(int Id)
+
+        public async Task<ActionResult> Edit(int Id)
         {
 
             var booking = await _bookingService.FindBooking(Id);
@@ -49,27 +50,40 @@ namespace Final_Project_Conference_Room_Booking.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(Booking booking)
         {
-                var result = await _bookingService.Create(booking);
-
-            return RedirectToAction("Index");
+            if (ModelState.IsValid)
+            {
+                await _bookingService.Create(booking);
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                var conferenceRoomList = await _conferenceRoomService.GetAllConferenceRooms();
+                ViewBag.ConferenceRoomList = conferenceRoomList; // ViewBag i dergon cRooms tek View
+                return View(booking);
+            }
         }
-
-    
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(Booking booking)
         {
-            
+            if (ModelState.IsValid)
+            {
                 await _bookingService.Edit(booking);
                 return RedirectToAction("Index");
-            
+            }
+            else
+                return View(booking);
         }
 
         [HttpGet]
         public async Task<ActionResult> Delete(int id)
         {
             var booking = await _bookingService.FindBooking(id);
+            if(booking == null)
+            {
+                return BadRequest("The booking don't exist");
+            }
             return View(booking);
         }
 
@@ -77,13 +91,21 @@ namespace Final_Project_Conference_Room_Booking.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteBooking(int id)
         {
-            await _bookingService.DeleteBooking(id);
+          var deleteBooking=  await _bookingService.DeleteBooking(id);
+            if(deleteBooking == null)
+            {
+                return BadRequest("This bookind don't exist");
+            }
             return RedirectToAction("Index");
         }
 
         public async Task<ActionResult> Confirm(int id)
         {
             var booking = await _bookingService.FindBooking(id);
+            if (booking == null)
+            {
+                return BadRequest("this booking don't exist");
+            }
             return View(booking);
         }
 
@@ -91,7 +113,11 @@ namespace Final_Project_Conference_Room_Booking.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ConfirmBooking(int id)
         {
-            await _bookingService.Confirm(id);
+            var confirmBooking= await _bookingService.Confirm(id);
+            if(confirmBooking == null)
+            {
+                return BadRequest("This Booking don't exist");
+            }
             return RedirectToAction("Index");
         }
     }

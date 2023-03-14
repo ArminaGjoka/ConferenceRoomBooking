@@ -13,52 +13,118 @@ namespace Final_Project_Conference_Room_Booking.Repositories.Implementation
             _context = context;
         }
 
+     
         public async Task<List<Booking>> GetAllTheBookings()
         {
             var bookingList = await _context.Bookings.Where(x => x.IsDeleted == false).ToListAsync();
+
+            if (bookingList == null || bookingList.Count == 0)
+            {
+                throw new Exception("No bookings found.");
+            }
+
             return bookingList;
         }
+
         public async Task<Booking> Create(Booking booking)
         {
+            if (booking.StartDate >= booking.EndDate)
+            {
+                throw new ArgumentException("Booking start time must be before end time.");
+            }
+
             await _context.Bookings.AddAsync(booking);
-            await  _context.SaveChangesAsync();
-            return (booking);
+            await _context.SaveChangesAsync();
+            return booking;
         }
+ 
         public async Task<Booking> DeleteBooking(int id)
         {
-            var deleterecord = await _context.Bookings.FindAsync(id);
+            var booking = await _context.Bookings.FindAsync(id);
+            if (booking == null)
+            {
+                throw new ArgumentException($"Booking with ID {id} does not exist.");
+            }
 
-             deleterecord.IsDeleted = true;
-            _context.Bookings.Update(deleterecord);
+            booking.IsDeleted = true;
+            _context.Bookings.Update(booking);
             await _context.SaveChangesAsync();
 
-            return deleterecord;
+            return booking;
         }
+   
         public async Task<Booking> FindBooking(int id)
         {
-            var bookingId = await _context.Bookings.FindAsync(id);
-            return bookingId;
+            var booking = await _context.Bookings.FindAsync(id);
+            if (booking == null)
+            {
+                throw new ArgumentException($"Booking with ID {id} does not exist.");
+            }
+
+            return booking;
         }
+
+    
         public async Task<Booking> Edit(int id)
         {
-            return await _context.Bookings.FindAsync(id);
+            var booking = await _context.Bookings.FindAsync(id);
+            if (booking == null)
+            {
+                throw new ArgumentException($"Booking with ID {id} does not exist.");
+            }
+
+            return booking;
         }
+
+   
         public async Task<Booking> Edit(Booking booking)
         {
+            if (booking.StartDate >= booking.EndDate)
+            {
+                throw new ArgumentException("Booking start time must be before end time.");
+            }
+
             _context.Bookings.Update(booking);
             await _context.SaveChangesAsync();
             return booking;
         }
 
-  
+
         public async Task<Booking> Confirm(int id)
         {
+            var booking = await _context.Bookings.FindAsync(id);
+            if (booking == null)
+            {
+                throw new ArgumentException($"Booking with ID {id} does not exist.");
+            }
 
-            var confirmedrecord = await _context.Bookings.FindAsync(id);
-            confirmedrecord.IsConfirmed = true;
-            _context.Bookings.Update(confirmedrecord);
+            booking.IsConfirmed = true;
+            _context.Bookings.Update(booking);
             await _context.SaveChangesAsync();
-            return confirmedrecord;
+
+            return booking;
         }
+
+        public async Task<bool> CheckBookingConflict(Booking existingBooking, Booking newBooking)
+        {
+           
+            if (newBooking.StartDate >= existingBooking.StartDate && newBooking.StartDate < existingBooking.EndDate)
+            {
+                return true;
+            }
+
+           
+            if (newBooking.StartDate <= existingBooking.StartDate && newBooking.EndDate >= existingBooking.EndDate)
+            {
+                return true;
+            }
+
+            // No scheduling conflict was found
+            return false;
+        }
+
+     
+
+       
     }
 }

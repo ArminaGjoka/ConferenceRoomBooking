@@ -15,11 +15,11 @@ namespace Final_Project_Conference_Room_Booking.Controllers
     {
         private readonly IReservationHolderService _reservationHolderService;
         private readonly IBookingService _bookingService;
-       
+
         public ReservationHolderController(IReservationHolderService reservationHolderService, IBookingService bookingService)
         {
             _reservationHolderService = reservationHolderService;
-            _bookingService = bookingService;   
+            _bookingService = bookingService;
         }
 
         public async Task<ActionResult> Index()
@@ -52,31 +52,53 @@ namespace Final_Project_Conference_Room_Booking.Controllers
 
         public async Task<ActionResult> Create(ReservationHolder reservationHolder)
         {
-            var result = await _reservationHolderService.Create(reservationHolder);
-            return RedirectToAction("Index");
+            if (ModelState.IsValid)
+            {
+                var bookingList = await _bookingService.GetAllTheBookings();
+                ViewBag.BookingList = bookingList;
+                await _reservationHolderService.Create(reservationHolder);
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                
+                return View(reservationHolder);
+            }
         }
-
-     
 
         [HttpPost]
         public async Task<ActionResult> Edit(ReservationHolder reservationHolder)
         {
+            if (ModelState.IsValid)
+            {
                 await _reservationHolderService.Edit(reservationHolder);
                 return RedirectToAction("Index");
-
+            }
+            else
+            {
+                return View(reservationHolder);
+            }
         }
 
         [HttpGet]
         public async Task<ActionResult> Delete(int id)
         {
             var reservation = await _reservationHolderService.FindReservationHolder(id);
+            if (reservation == null)
+            {
+                return BadRequest("The reservation don't exist");
+            }
             return View(reservation);
         }
 
         [HttpPost]
         public async Task<ActionResult> DeleteReservationHolder(int id)
         {
-            await _reservationHolderService.DeleteReservationHolder(id);
+            var deleteRes = await _reservationHolderService.DeleteReservationHolder(id);
+            if (deleteRes == null)
+            {
+                return BadRequest("This Reservation don't exist");
+            }
             return RedirectToAction("Index");
         }
     }

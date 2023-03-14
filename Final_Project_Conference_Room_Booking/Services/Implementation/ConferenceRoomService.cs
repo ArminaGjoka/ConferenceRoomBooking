@@ -19,6 +19,10 @@ public class ConferenceRoomService:IConferenceRoomService
     }
     public async Task<ConferenceRoom> Create(ConferenceRoom conferenceRoom)
     {
+        if (conferenceRoom.MaxCapacity > 50)
+        {
+            throw new ArgumentException("The Number of the attendees cannot exceed 50 persons");
+        }
         return await _conferenceRoomRepository.Create(conferenceRoom);
     }
     public async Task<ConferenceRoom> DeleteConferenceRoom(int id)
