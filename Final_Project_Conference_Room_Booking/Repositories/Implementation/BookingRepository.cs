@@ -13,9 +13,9 @@ namespace Final_Project_Conference_Room_Booking.Repositories.Implementation
             _context = context;
         }
 
-     
         public async Task<List<Booking>> GetAllTheBookings()
         {
+
             var bookingList = await _context.Bookings.Where(x => x.IsDeleted == false).ToListAsync();
 
             if (bookingList == null || bookingList.Count == 0)
@@ -26,13 +26,37 @@ namespace Final_Project_Conference_Room_Booking.Repositories.Implementation
             return bookingList;
         }
 
-        public async Task<Booking> Create(Booking booking)
+        public async Task<Booking> Create(Booking booking, ConferenceRoom conference)
         {
-            if (booking.StartDate >= booking.EndDate)
+            var resultat = await (from b in _context.Bookings
+                                  join r in _context.ConferenceRooms
+                                  on b.RoomId equals r.Id
+                                  select new
+                                  {
+                                      Capacity = b.Capacity,
+                                      MaxCapacity = r.MaxCapacity
+                                  }
+                                ).FirstOrDefaultAsync();
+            if (resultat != null)
             {
-                throw new ArgumentException("Booking start time must be before end time.");
+                if (resultat.Capacity > resultat.MaxCapacity)
+                {
+                    throw new Exception($"The nr of the attendees cannot exceed the max capacity of the room  : {resultat.MaxCapacity}  attendees ");
+                }
             }
 
+            if (booking == null)
+            {
+                throw new ArgumentNullException(nameof(booking), "The booking  cannot be null.");
+            }
+
+            var overlappingPeriod = await _context.Bookings.FirstOrDefaultAsync(up => up.RoomId == booking.RoomId
+                                                                                         && up.StartDate < booking.EndDate
+                                                                                         && up.EndDate > booking.StartDate);
+            if (overlappingPeriod != null)
+            {
+                throw new InvalidOperationException("The new booking overlaps with an existing one.");
+            }
             await _context.Bookings.AddAsync(booking);
             await _context.SaveChangesAsync();
             return booking;
@@ -63,8 +87,7 @@ namespace Final_Project_Conference_Room_Booking.Repositories.Implementation
 
             return booking;
         }
-
-    
+  
         public async Task<Booking> Edit(int id)
         {
             var booking = await _context.Bookings.FindAsync(id);
@@ -75,8 +98,7 @@ namespace Final_Project_Conference_Room_Booking.Repositories.Implementation
 
             return booking;
         }
-
-   
+  
         public async Task<Booking> Edit(Booking booking)
         {
             if (booking.StartDate >= booking.EndDate)
@@ -88,7 +110,6 @@ namespace Final_Project_Conference_Room_Booking.Repositories.Implementation
             await _context.SaveChangesAsync();
             return booking;
         }
-
 
         public async Task<Booking> Confirm(int id)
         {
@@ -105,26 +126,5 @@ namespace Final_Project_Conference_Room_Booking.Repositories.Implementation
             return booking;
         }
 
-        public async Task<bool> CheckBookingConflict(Booking existingBooking, Booking newBooking)
-        {
-           
-            if (newBooking.StartDate >= existingBooking.StartDate && newBooking.StartDate < existingBooking.EndDate)
-            {
-                return true;
-            }
-
-           
-            if (newBooking.StartDate <= existingBooking.StartDate && newBooking.EndDate >= existingBooking.EndDate)
-            {
-                return true;
-            }
-
-            // No scheduling conflict was found
-            return false;
-        }
-
-     
-
-       
     }
 }

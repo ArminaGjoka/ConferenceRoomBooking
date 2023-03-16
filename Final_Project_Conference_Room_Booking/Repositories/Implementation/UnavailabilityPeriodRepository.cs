@@ -22,19 +22,40 @@ namespace Final_Project_Conference_Room_Booking.Repositories.Implementation
         }
         public async Task<UnavailabilityPeriod> Create(UnavailabilityPeriod unavailability)
         {
+            if (unavailability == null)
+            {
+                throw new ArgumentNullException(nameof(unavailability), "The unavailability period cannot be null.");
+            }
+
+            var overlappingPeriod = await _context.UnavailabilityPeriods.FirstOrDefaultAsync(up => up.ConferenceRoomId == unavailability.ConferenceRoomId
+                                                                                         && up.StartDate < unavailability.EndDate
+                                                                                         && up.EndDate > unavailability.StartDate);
+            if (overlappingPeriod != null)
+            {
+                throw new InvalidOperationException("The unavailability period overlaps with an existing one.");
+            }
+
             await _context.UnavailabilityPeriods.AddAsync(unavailability);
-            await _context.SaveChangesAsync();  
+            await _context.SaveChangesAsync();
             return unavailability;
         }
+
+       
         public async Task<UnavailabilityPeriod> DeleteUnavailabilityPeriod(int id)
         {
             var deleterecord = await _context.UnavailabilityPeriods.FindAsync(id);
+
+            if (deleterecord == null)
+            {
+                throw new KeyNotFoundException($"The unavailability period with ID {id} does not exist.");
+            }
 
             _context.UnavailabilityPeriods.Remove(deleterecord);
             await _context.SaveChangesAsync();
 
             return deleterecord;
         }
+
         public async Task<UnavailabilityPeriod> FindUnavailabilityPeriod(int id)
         {
             var uPeriodId = await _context.UnavailabilityPeriods.FindAsync(id);
@@ -44,12 +65,38 @@ namespace Final_Project_Conference_Room_Booking.Repositories.Implementation
         {
             return await _context.UnavailabilityPeriods.FindAsync(id);
         }
+       
         public async Task<UnavailabilityPeriod> Edit(UnavailabilityPeriod unavailability)
         {
-            _context.UnavailabilityPeriods.Update(unavailability);
+            if (unavailability == null)
+            {
+                throw new ArgumentNullException(nameof(unavailability), "The unavailability period cannot be null.");
+            }
+
+            var existingPeriod = await _context.UnavailabilityPeriods.FindAsync(unavailability.Id);
+            if (existingPeriod == null)
+            {
+                throw new KeyNotFoundException($"The unavailability period with ID {unavailability.Id} does not exist.");
+            }
+
+            var overlappingPeriod = await _context.UnavailabilityPeriods.FirstOrDefaultAsync(up => up.ConferenceRoomId == unavailability.ConferenceRoomId
+                                                                                         && up.Id != unavailability.Id
+                                                                                         && up.StartDate < unavailability.EndDate
+                                                                                         && up.EndDate > unavailability.StartDate);
+            if (overlappingPeriod != null)
+            {
+                throw new InvalidOperationException("The unavailability period overlaps with an existing one.");
+            }
+
+            existingPeriod.StartDate = unavailability.StartDate;
+            existingPeriod.EndDate = unavailability.EndDate;
+
+            _context.UnavailabilityPeriods.Update(existingPeriod);
             await _context.SaveChangesAsync();
-            return unavailability;
+
+            return existingPeriod;
         }
+
 
     }
 }

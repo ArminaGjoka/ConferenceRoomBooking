@@ -13,36 +13,39 @@ public class ConferenceRoomRepository : IConferenceRoomRepository
         _context = context;
     }
 
-   public async Task<List<ConferenceRoom>> GetAllConferenceRooms()
+    public async Task<List<ConferenceRoom>> GetAllConferenceRooms()
     {
         var result = await _context.ConferenceRooms.ToListAsync();
         return result;
     }
     public async Task<ConferenceRoom> Create(ConferenceRoom conferenceRoom)
     {
-        if (conferenceRoom.MaxCapacity > 50)
-        {
-            throw new ArgumentException("The Number of the attendees cannot exceed 50 persons");
-        }
+
         await _context.ConferenceRooms.AddAsync(conferenceRoom);
-       await _context.SaveChangesAsync();
+        await _context.SaveChangesAsync();
         return (conferenceRoom);
     }
     public async Task<ConferenceRoom> DeleteConferenceRoom(int id)
     {
+     
         var deleterecord = await _context.ConferenceRooms.FindAsync(id);
-        _context.ConferenceRooms.Remove(deleterecord);
-        await _context.SaveChangesAsync();
-        return deleterecord;
+       
+            _context.ConferenceRooms.Remove(deleterecord);
+            await _context.SaveChangesAsync();
+       
+            return deleterecord;
+        
     }
     public async Task<ConferenceRoom> FindConferenceRoom(int id)
     {
-        var cRoomId = await _context.ConferenceRooms.FindAsync(id);
-        return cRoomId;
+       return  await _context.ConferenceRooms.FindAsync(id);
+    
+        
     }
     public async Task<ConferenceRoom> Edit(int id)
     {
         return await _context.ConferenceRooms.FindAsync(id);
+       
     }
     public async Task<ConferenceRoom> Edit(ConferenceRoom conferenceRoom)
     {

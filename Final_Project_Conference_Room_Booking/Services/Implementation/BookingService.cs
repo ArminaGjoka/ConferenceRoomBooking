@@ -13,11 +13,12 @@ namespace Final_Project_Conference_Room_Booking.Services.Implementation
     {
 
         private readonly IBookingRepository _bookingRepository;
+        private readonly IConferenceRoomRepository _conferenceRoomRepository;
 
-        public BookingService(IBookingRepository bookingRepository)
+        public BookingService(IBookingRepository bookingRepository, IConferenceRoomRepository conferenceRoomRepository)
         {
             _bookingRepository = bookingRepository;
-
+            _conferenceRoomRepository = conferenceRoomRepository;   
         }
 
         public async Task<List<Booking>> GetAllTheBookings()
@@ -32,20 +33,15 @@ namespace Final_Project_Conference_Room_Booking.Services.Implementation
             return bookings;
         }
    
-        public async Task<Booking> Create(Booking booking)
+        public async Task<Booking> Create(Booking booking, ConferenceRoom conference)
         {
-            // Validate that the booking has a valid start and end time
-            if (booking.StartDate >= booking.EndDate)
-            {
-                throw new Exception("The booking start time must be before the end time.");
-            }
-
-            return await _bookingRepository.Create(booking);
+           
+            return await _bookingRepository.Create(booking,conference);
         }
 
         public async Task<Booking> DeleteBooking(int id)
         {
-            // Validate that the id is not negative
+           
             if (id <= 0)
             {
                 throw new Exception("Invalid booking id.");
@@ -53,11 +49,10 @@ namespace Final_Project_Conference_Room_Booking.Services.Implementation
 
             return await _bookingRepository.DeleteBooking(id);
         }
-
-       
+     
         public async Task<Booking> FindBooking(int id)
         {
-            // Validate that the id is not negative
+            
             if (id <= 0)
             {
                 throw new Exception("Invalid booking id.");
@@ -68,7 +63,7 @@ namespace Final_Project_Conference_Room_Booking.Services.Implementation
 
         public async Task<Booking> Edit(int id)
         {
-            // Validate that the id is not negative
+           
             if (id <= 0)
             {
                 throw new Exception("Invalid booking id.");
@@ -76,11 +71,10 @@ namespace Final_Project_Conference_Room_Booking.Services.Implementation
 
             return await _bookingRepository.FindBooking(id);
         }
-
-       
+      
         public async Task<Booking> Edit(Booking booking)
         {
-            // Validate that the booking has a valid start and end time
+           
             if (booking.StartDate >= booking.EndDate)
             {
                 throw new Exception("The booking start time must be before the end time.");
@@ -91,49 +85,27 @@ namespace Final_Project_Conference_Room_Booking.Services.Implementation
     
         public async Task<Booking> Confirm(int id)
         {
-            // Validate that the id is not negative
+          
             if (id <= 0)
             {
                 throw new Exception("Invalid booking id.");
             }
 
-            // Find the booking with the specified id
+            
             var booking = await _bookingRepository.FindBooking(id);
 
-            // Validate that the booking exists
+           
             if (booking == null)
             {
                 throw new Exception("Booking not found.");
             }
-
-            // Set the booking status to confirmed
+     
 
             booking.IsConfirmed = true;
 
             return await _bookingRepository.Edit(booking);
 
         }
-        public async Task<bool> CheckBookingConflict(Booking existingBooking, Booking newBooking)
-        {
-          
-            if (newBooking.StartDate >= existingBooking.StartDate && newBooking.StartDate < existingBooking.EndDate)
-            {
-                throw new Exception("The new Booking cannot be in the same period like the existing Booking");
-                return true;
-            }
-
-            
-            if (newBooking.StartDate <= existingBooking.StartDate && newBooking.EndDate >= existingBooking.EndDate)
-            {
-                return false;
-            }
-
-            // No scheduling conflict was found
-            return false;
-        }
-
-   
-
      
     }
 }

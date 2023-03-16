@@ -27,10 +27,12 @@ namespace Final_Project_Conference_Room_Booking.Controllers
 
         public async Task<ActionResult> Create()
         {
+        
             var conferenceRoomList = await _conferenceRoomService.GetAllConferenceRooms();
-            ViewBag.ConferenceRoomList = conferenceRoomList; // ViewBag i dergon cRooms tek View
+            ViewBag.ConferenceRoomList = conferenceRoomList;
             return View();
         }
+
 
         public async Task<ActionResult> Edit(int Id)
         {
@@ -46,41 +48,48 @@ namespace Final_Project_Conference_Room_Booking.Controllers
 
             return View(booking);
         }
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(Booking booking)
+        public async Task<ActionResult> Create(Booking booking, ConferenceRoom conference)
         {
-            if (ModelState.IsValid)
-            {
-                await _bookingService.Create(booking);
+            //if (ModelState.IsValid)
+            //{
+
+                await _bookingService.Create(booking,conference);
                 return RedirectToAction("Index");
-            }
-            else
-            {
-                var conferenceRoomList = await _conferenceRoomService.GetAllConferenceRooms();
-                ViewBag.ConferenceRoomList = conferenceRoomList; // ViewBag i dergon cRooms tek View
-                return View(booking);
-            }
+            //}
+            //else
+            //{
+            //    //var conferenceRoomList = await _conferenceRoomService.GetAllConferenceRooms();
+            //    //ViewBag.ConferenceRoomList = conferenceRoomList;
+            //    return View(booking);
+            //}
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(Booking booking)
         {
-            if (ModelState.IsValid)
-            {
+            //if (ModelState.IsValid)
+            //{
                 await _bookingService.Edit(booking);
                 return RedirectToAction("Index");
-            }
-            else
-                return View(booking);
+            //}
+            //else
+            //{
+            //    var bookings = await _conferenceRoomService.GetAllConferenceRooms();
+            //    ViewBag.RoomId = new SelectList(bookings, "Id", "Code", booking.RoomId);
+            //    return View(booking);
+            //}
         }
 
         [HttpGet]
         public async Task<ActionResult> Delete(int id)
         {
             var booking = await _bookingService.FindBooking(id);
-            if(booking == null)
+            if (booking == null)
             {
                 return BadRequest("The booking don't exist");
             }
@@ -91,8 +100,8 @@ namespace Final_Project_Conference_Room_Booking.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> DeleteBooking(int id)
         {
-          var deleteBooking=  await _bookingService.DeleteBooking(id);
-            if(deleteBooking == null)
+            var deleteBooking = await _bookingService.DeleteBooking(id);
+            if (deleteBooking == null)
             {
                 return BadRequest("This bookind don't exist");
             }
@@ -113,8 +122,8 @@ namespace Final_Project_Conference_Room_Booking.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> ConfirmBooking(int id)
         {
-            var confirmBooking= await _bookingService.Confirm(id);
-            if(confirmBooking == null)
+            var confirmBooking = await _bookingService.Confirm(id);
+            if (confirmBooking == null)
             {
                 return BadRequest("This Booking don't exist");
             }

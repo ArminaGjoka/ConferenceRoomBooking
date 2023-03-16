@@ -11,8 +11,8 @@ namespace Final_Project_Conference_Room_Booking.Models
             UnavailabilityPeriods = new HashSet<UnavailabilityPeriod>();
         }
 
-        public int Id { get; set; }
-        public string Code { get; set; } = null!;
+        public int Id { get; set; } 
+        public string Code { get; set; } 
         public int MaxCapacity { get; set; }
 
         public virtual ICollection<Booking> Bookings { get; set; }

@@ -27,13 +27,10 @@ public class ConferenceRoomController : Controller
     [ValidateAntiForgeryToken]
     public async Task<ActionResult> Create(ConferenceRoom conferenceRoom)
     {
-        //if (ModelState.IsValid)
-        //{
+        
             var result = await _conferenceRoomService.Create(conferenceRoom);
             return RedirectToAction("Index");
-        //}
-        //else
-        //    return View(conferenceRoom);
+      
     }
     [HttpGet]
     public async Task<ActionResult> Edit(int id)

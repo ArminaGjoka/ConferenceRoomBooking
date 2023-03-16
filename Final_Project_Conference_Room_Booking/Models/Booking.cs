@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-
+using System.ComponentModel.DataAnnotations;
 
 namespace Final_Project_Conference_Room_Booking.Models
 {
@@ -13,14 +13,14 @@ namespace Final_Project_Conference_Room_Booking.Models
 
         public int Id { get; set; }
         public string Code { get; set; } = null!;
+
+        //[AttendeesValidationAttribute]
         public int Capacity { get; set; }
-      
-     
-        public int RoomId { get; set; }
+ 
+        public int? RoomId { get; set; }
 
         [BookingValidation]
         public DateTime StartDate { get; set; }
-
         public DateTime EndDate { get; set; }
         public bool IsConfirmed { get; set; }
         public bool IsDeleted { get; set; }
