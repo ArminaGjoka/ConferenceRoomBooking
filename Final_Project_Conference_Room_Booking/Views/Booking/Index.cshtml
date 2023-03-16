@@ -1,4 +1,5 @@
 ﻿@using System.Linq;
+@using Microsoft.AspNetCore.Identity
 @model IEnumerable<Booking>
 
 @{
@@ -10,55 +11,80 @@
     <h1 class="alert-success">@TempData["ResultOk"]</h1>
 }
 
+@inject SignInManager<ApplicationUser> SignInManager
+
 <div class="container shadow p-5">
+    @if (!SignInManager.IsSignedIn(User))
+    {
 
-    <div class="col mb-3">
-        <a asp-controller="Booking" asp-action="Create" class="btn btn-lg btn-primary"><i class="bi bi-file-plus-fill"></i>Add Booking</a>
-    </div>
-    <table class="table table-bordered table-hover">
-        <thead>
-            <tr>
-                <th scope="col">Code</th>
-                <th scope="col">Capacity</th>
-                <th scope="col">RoomId</th>
-                <th scope="col">StartDate</th>
-                <th scope="col">EndDate</th>
-                @* <th scope="col">IsConfirmed</th>
-                <th scope="col">IsDeleted</th>
-                <th scope="col">ConfirmedFromId</th>*@
-            </tr>
-        </thead>
-        <tbody>
-
-            @foreach (var item in Model)
-            {
+        <div class="col mb-3">
+            <a asp-controller="Booking" asp-action="Create" class="btn btn-lg btn-primary"><i class="bi bi-file-plus-fill"></i>Add Booking</a>
+        </div>
+    }
+    else
+    {
+        @using (Html.BeginForm("Index", "Booking", FormMethod.Get))
+        {
+            <p>
+                Search all the rezervations that are performed on a specific date: @Html.TextBox("dt")
+                <input type="submit" value="Search" />
+            </p>
+        }
+        <table class="table table-bordered table-hover">
+            <thead>
                 <tr>
-                    <td width="20%">
-                        @item.Code
-                    </td>
-                    <td width="20%">
-                        @item.Capacity
-                    </td>
-                    <td width="20%">
-                        @item.RoomId
-                    </td>
-                    <td width="20%">
-                        @item.StartDate
-                    </td>
-                    <td width="20%">
-                        @item.EndDate
-                    </td>
-               
-
-                    <td>
-                        <div role="group" class="w-60 btn-group">
-                            <a asp-controller="Booking" asp-action="Edit" asp-route-id="@item.Id" class=" btn btn-sm btn-primary"><i class="bi bi-pencil-square"></i>Edit</a>&nbsp;
-                            <a asp-controller="Booking" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger"><i class="bi bi-trash-fill"></i>Delete</a>&nbsp;
-                            <a asp-controller="Booking" asp-action="Confirm" asp-route-id="@item.Id" class="btn btn-sm btn-danger"><i class="bi bi-trash-fill"></i>Confirm</a>
-                        </div>
-                    </td>
+                    <th scope="col">Code</th>
+                    <th scope="col">Capacity</th>
+                    <th scope="col">RoomId</th>
+                    <th scope="col">StartDate</th>
+                    <th scope="col">EndDate</th>
+                    <th scope="col">IsConfirmed</th>
+                    <th scope="col">IsDeleted</th>
+                    <th scope="col">ConfirmedFromId</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td width="20%">
+                            @item.Code
+                        </td>
+                        <td width="20%">
+                            @item.Capacity
+                        </td>
+                        <td width="20%">
+                            @item.RoomId
+                        </td>
+                        <td width="20%">
+                            @item.StartDate
+                        </td>
+                        <td width="20%">
+                            @item.EndDate
+                        </td>
+                        <td width="20%">
+                            @item.IsConfirmed
+                        </td>
+                        <td width="20%">
+                            @item.IsDeleted
+                        </td>
+                        <td width="20%">
+                            @item.ConfirmedFromId
+                        </td>
+
+                        <td>
+                            <div role="group" class="w-60 btn-group">
+
+                                <a asp-controller="Booking" asp-action="Edit" asp-route-id="@item.Id" class=" btn btn-sm btn-primary"><i class="bi bi-pencil-square"></i>Edit</a>&nbsp;
+                                <a asp-controller="Booking" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger"><i class="bi bi-trash-fill"></i>Delete</a>&nbsp;
+                                <a asp-controller="Booking" asp-action="Confirm" asp-route-id="@item.Id" class="btn btn-sm btn-danger"><i class="bi bi-trash-fill"></i>Confirm</a>
+
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
 </div>

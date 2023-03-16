@@ -18,7 +18,21 @@ namespace Final_Project_Conference_Room_Booking.Controllers
             _bookingService = bookingService;
             _conferenceRoomService = conferenceRoomService;
         }
+        public async Task<ActionResult> Index(DateTime? dt)
+        {
+            List<Booking> bookingList;
 
+            if (dt == null)
+            {
+                bookingList = await _bookingService.GetAllTheBookings();
+            }
+            else
+
+            {
+                bookingList = await _bookingService.GetAllTheBookings((DateTime)dt);
+            }
+            return View(bookingList);
+        }
         public async Task<ActionResult> Index()
         {
             var bookingList = await _bookingService.GetAllTheBookings();

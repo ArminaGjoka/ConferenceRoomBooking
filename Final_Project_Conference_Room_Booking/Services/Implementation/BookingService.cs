@@ -21,6 +21,11 @@ namespace Final_Project_Conference_Room_Booking.Services.Implementation
             _conferenceRoomRepository = conferenceRoomRepository;   
         }
 
+        public async Task<List<Booking>> GetAllTheBookings(DateTime data)
+        {
+            return await _bookingRepository.GetAllTheBookings(data);
+        }
+      
         public async Task<List<Booking>> GetAllTheBookings()
         {
             var bookings = await _bookingRepository.GetAllTheBookings();
