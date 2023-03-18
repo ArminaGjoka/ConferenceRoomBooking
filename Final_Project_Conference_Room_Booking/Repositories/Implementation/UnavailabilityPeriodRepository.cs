@@ -25,7 +25,6 @@ namespace Final_Project_Conference_Room_Booking.Repositories.Implementation
         {
             var result = await _context.UnavailabilityPeriods.ToListAsync();
             return result;
-
         }
         public async Task<UnavailabilityPeriod> Create(UnavailabilityPeriod unavailability)
         {
@@ -34,8 +33,7 @@ namespace Final_Project_Conference_Room_Booking.Repositories.Implementation
             await _context.SaveChangesAsync();
             return unavailability;
         }
-
-       
+      
         public async Task<UnavailabilityPeriod> DeleteUnavailabilityPeriod(int id)
         {
             var deleterecord = await _context.UnavailabilityPeriods.FindAsync(id);
@@ -63,35 +61,16 @@ namespace Final_Project_Conference_Room_Booking.Repositories.Implementation
        
         public async Task<UnavailabilityPeriod> Edit(UnavailabilityPeriod unavailability)
         {
-            if (unavailability == null)
+            if (unavailability.StartDate > unavailability.EndDate)
             {
-                throw new ArgumentNullException(nameof(unavailability), "The unavailability period cannot be null.");
+                throw new ArgumentException("Booking start time must be before end time.");
             }
 
-            var existingPeriod = await _context.UnavailabilityPeriods.FindAsync(unavailability.Id);
-            if (existingPeriod == null)
-            {
-                throw new KeyNotFoundException($"The unavailability period with ID {unavailability.Id} does not exist.");
-            }
-
-            var overlappingPeriod = await _context.UnavailabilityPeriods.FirstOrDefaultAsync(up => up.ConferenceRoomId == unavailability.ConferenceRoomId
-                                                                                         && up.Id != unavailability.Id
-                                                                                         && up.StartDate < unavailability.EndDate
-                                                                                         && up.EndDate > unavailability.StartDate);
-            if (overlappingPeriod != null)
-            {
-                throw new InvalidOperationException("The unavailability period overlaps with an existing one.");
-            }
-
-            existingPeriod.StartDate = unavailability.StartDate;
-            existingPeriod.EndDate = unavailability.EndDate;
-
-            _context.UnavailabilityPeriods.Update(existingPeriod);
+            _context.UnavailabilityPeriods.Update(unavailability);
             await _context.SaveChangesAsync();
-
-            return existingPeriod;
+            return unavailability;
+           
         }
-
 
     }
 }

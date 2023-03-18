@@ -52,32 +52,33 @@ namespace Final_Project_Conference_Room_Booking.Controllers
 
         public async Task<ActionResult> Create(ReservationHolder reservationHolder)
         {
-            //if (ModelState.IsValid)
-            //{
+            if (ModelState.IsValid)
+            {
                 var bookingList = await _bookingService.GetAllTheBookings();
                 ViewBag.BookingList = bookingList;
                 await _reservationHolderService.Create(reservationHolder);
                 return RedirectToAction("Index");
-            //}
-            //else
-            //{
-                
-            //    return View(reservationHolder);
-            //}
+            }
+            else
+            {
+                var bookingList = await _bookingService.GetAllTheBookings();
+                ViewBag.BookingList = bookingList;
+                return View();
+            }
         }
 
         [HttpPost]
         public async Task<ActionResult> Edit(ReservationHolder reservationHolder)
         {
-            //if (ModelState.IsValid)
-            //{
+            if (ModelState.IsValid)
+            {
                 await _reservationHolderService.Edit(reservationHolder);
                 return RedirectToAction("Index");
-            //}
-            //else
-            //{
-            //    return View(reservationHolder);
-            //}
+            }
+            else
+            {
+                return View(reservationHolder);
+            }
         }
 
         [HttpGet]

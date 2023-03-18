@@ -80,7 +80,7 @@ namespace Final_Project_Conference_Room_Booking.Repositories.Implementation
   
         public async Task<Booking> Edit(Booking booking)
         {
-            if (booking.StartDate >= booking.EndDate)
+            if (booking.StartDate > booking.EndDate)
             {
                 throw new ArgumentException("Booking start time must be before end time.");
             }
