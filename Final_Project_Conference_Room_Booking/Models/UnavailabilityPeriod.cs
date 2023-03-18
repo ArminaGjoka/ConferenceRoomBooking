@@ -9,11 +9,9 @@ namespace Final_Project_Conference_Room_Booking.Models
 
         [UnavailabilityPeriodValidation]
         public DateTime StartDate { get; set; }
-
         public DateTime EndDate { get; set; }
         public int ConferenceRoomId { get; set; }
         public virtual ConferenceRoom? ConferenceRoom { get; set; } 
         
-
     }
 }

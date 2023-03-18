@@ -13,6 +13,10 @@ namespace Final_Project_Conference_Room_Booking.Models
             {
                 return new ValidationResult("Start Date cannot be greater than End Date");
             }
+            if (unavailabilityPeriod.StartDate < DateTime.Now.AddDays(-1))
+            {
+                return new ValidationResult("Start Date cannot be in the past");
+            }
 
             return ValidationResult.Success;
         }

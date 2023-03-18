@@ -62,9 +62,11 @@ namespace Final_Project_Conference_Room_Booking.Controllers
             {
                 var result = await _unavailabilityPeriodService.Create(unavailabilityPeriod);
                 return RedirectToAction("Index");
-
             }
-            return View();
+
+            var conferenceRoomList = await _conferenceRoomService.GetAllConferenceRooms();
+            ViewBag.ConferenceRoomList = conferenceRoomList; // ViewBag i dergon cRooms tek View
+            return View(unavailabilityPeriod);
         }
 
         [HttpPost]

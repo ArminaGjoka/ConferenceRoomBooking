@@ -39,8 +39,7 @@ public class ConferenceRoomRepository : IConferenceRoomRepository
     public async Task<ConferenceRoom> FindConferenceRoom(int id)
     {
        return  await _context.ConferenceRooms.FindAsync(id);
-    
-        
+           
     }
     public async Task<ConferenceRoom> Edit(int id)
     {
