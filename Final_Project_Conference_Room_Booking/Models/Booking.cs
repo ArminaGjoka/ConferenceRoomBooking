@@ -17,7 +17,7 @@ namespace Final_Project_Conference_Room_Booking.Models
         //[AttendeesValidationAttribute]
         public int Capacity { get; set; }
  
-        public int? RoomId { get; set; }
+        public int RoomId { get; set; }
 
         [BookingValidation]
         public DateTime StartDate { get; set; }
@@ -27,7 +27,7 @@ namespace Final_Project_Conference_Room_Booking.Models
         public int? ConfirmedFromId { get; set; }
 
         public virtual ApplicationUser? ConfirmedFrom { get; set; }
-        public virtual ConferenceRoom Room { get; set; } = null!;
+        public virtual ConferenceRoom? Room { get; set; }
         public virtual ICollection<ReservationHolder> ReservationHolders { get; set; }
     }
 }

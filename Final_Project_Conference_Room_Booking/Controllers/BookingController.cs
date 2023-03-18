@@ -33,11 +33,11 @@ namespace Final_Project_Conference_Room_Booking.Controllers
             }
             return View(bookingList);
         }
-       
+
 
         public async Task<ActionResult> Create()
         {
-        
+
             var conferenceRoomList = await _conferenceRoomService.GetAllConferenceRooms();
             ViewBag.ConferenceRoomList = conferenceRoomList;
             return View();
@@ -62,20 +62,22 @@ namespace Final_Project_Conference_Room_Booking.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Create(Booking booking, ConferenceRoom conference)
+        public async Task<ActionResult> Create(Booking booking)
         {
-            //if (ModelState.IsValid)
-            //{
+            if (ModelState.IsValid)
+            {
 
-                await _bookingService.Create(booking,conference);
-                return RedirectToAction("Index");
-            //}
-            //else
-            //{
-            //    //var conferenceRoomList = await _conferenceRoomService.GetAllConferenceRooms();
-            //    //ViewBag.ConferenceRoomList = conferenceRoomList;
-            //    return View(booking);
-            //}
+                if (await _bookingService.Create(booking) == true)
+                    return RedirectToAction("Index");
+
+                return BadRequest("The nr of attendees cannot exceed the Max capacity of the room");
+            }
+            else
+            {
+                var conferenceRoomList = await _conferenceRoomService.GetAllConferenceRooms();
+                ViewBag.ConferenceRoomList = conferenceRoomList;
+                return View(booking);
+            }
         }
 
         [HttpPost]
@@ -84,8 +86,8 @@ namespace Final_Project_Conference_Room_Booking.Controllers
         {
             //if (ModelState.IsValid)
             //{
-                await _bookingService.Edit(booking);
-                return RedirectToAction("Index");
+            await _bookingService.Edit(booking);
+            return RedirectToAction("Index");
             //}
             //else
             //{

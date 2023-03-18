@@ -38,12 +38,30 @@ namespace Final_Project_Conference_Room_Booking.Services.Implementation
             return bookings;
         }
    
-        public async Task<Booking> Create(Booking booking, ConferenceRoom conference)
+        public async Task<bool> Create(Booking booking)
         {
-           
-            return await _bookingRepository.Create(booking,conference);
-        }
+            var room = await _conferenceRoomRepository.FindConferenceRoom(booking.RoomId);
 
+            if(booking.Capacity> room.MaxCapacity)
+            {
+                return false;
+            }
+
+
+            return true;
+        }
+        //if (booking == null)
+        //{
+        //    throw new ArgumentNullException(nameof(booking), "The booking  cannot be null.");
+        //}
+
+        //var overlappingPeriod = await _context.Bookings.FirstOrDefaultAsync(up => up.RoomId == booking.RoomId
+        //                                                                             && up.StartDate < booking.EndDate
+        //                                                                             && up.EndDate > booking.StartDate);
+        //if (overlappingPeriod != null)
+        //{
+        //    throw new InvalidOperationException("The new booking overlaps with an existing one.");
+        //}
         public async Task<Booking> DeleteBooking(int id)
         {
            

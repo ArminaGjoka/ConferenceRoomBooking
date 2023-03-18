@@ -14,6 +14,6 @@ namespace Final_Project_Conference_Room_Booking.Models
         public DateTime EndDate { get; set; }
         public int ConferenceRoomId { get; set; }
 
-        public virtual ConferenceRoom ConferenceRoom { get; set; } = null!;
+        public virtual ConferenceRoom? ConferenceRoom { get; set; } 
     }
 }

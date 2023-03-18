@@ -6,7 +6,7 @@ namespace Final_Project_Conference_Room_Booking.Services.Interfaces
     {
         Task<List<Booking>> GetAllTheBookings();
         Task<List<Booking>> GetAllTheBookings(DateTime data);
-        Task<Booking> Create(Booking booking);
+        Task<bool> Create(Booking booking);
         Task<Booking> DeleteBooking(int id);
         Task<Booking> FindBooking(int id);
         Task<Booking> Edit(int id);

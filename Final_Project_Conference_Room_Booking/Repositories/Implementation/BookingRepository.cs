@@ -33,37 +33,9 @@ namespace Final_Project_Conference_Room_Booking.Repositories.Implementation
             return bookingList;
         }
 
-        public async Task<Booking> Create(Booking booking, ConferenceRoom conference)
+        public async Task<Booking> Create(Booking booking)
         {
-            var resultat = await (from b in _context.Bookings
-                                  join r in _context.ConferenceRooms
-                                  on b.RoomId equals r.Id
-                                  select new
-                                  {
-                                      Capacity = b.Capacity,
-                                      MaxCapacity = r.MaxCapacity
-                                  }
-                                ).FirstOrDefaultAsync();
-            if (resultat != null)
-            {
-                if (resultat.Capacity > resultat.MaxCapacity)
-                {
-                    throw new Exception($"The nr of the attendees cannot exceed the max capacity of the room  : {resultat.MaxCapacity}  attendees ");
-                }
-            }
-
-            if (booking == null)
-            {
-                throw new ArgumentNullException(nameof(booking), "The booking  cannot be null.");
-            }
-
-            var overlappingPeriod = await _context.Bookings.FirstOrDefaultAsync(up => up.RoomId == booking.RoomId
-                                                                                         && up.StartDate < booking.EndDate
-                                                                                         && up.EndDate > booking.StartDate);
-            if (overlappingPeriod != null)
-            {
-                throw new InvalidOperationException("The new booking overlaps with an existing one.");
-            }
+          
             await _context.Bookings.AddAsync(booking);
             await _context.SaveChangesAsync();
             return booking;

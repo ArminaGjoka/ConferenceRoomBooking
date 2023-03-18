@@ -2,6 +2,7 @@
 using Final_Project_Conference_Room_Booking.Services.Implementation;
 using Final_Project_Conference_Room_Booking.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Final_Project_Conference_Room_Booking.Controllers
@@ -34,6 +35,8 @@ namespace Final_Project_Conference_Room_Booking.Controllers
         {
             var conferenceRoomList = await _conferenceRoomService.GetAllConferenceRooms();
             ViewBag.ConferenceRoomList = conferenceRoomList; // ViewBag i dergon cRooms tek View
+
+
             return View();
         }
         public async Task<IActionResult> Edit(int id)
@@ -56,10 +59,15 @@ namespace Final_Project_Conference_Room_Booking.Controllers
 
         public async Task<ActionResult> Create(UnavailabilityPeriod unavailabilityPeriod)
         {
-            var result = await _unavailabilityPeriodService.Create(unavailabilityPeriod);
-            return RedirectToAction("Index");
+            if (ModelState.IsValid)
+            {
+                var result = await _unavailabilityPeriodService.Create(unavailabilityPeriod);
+                return RedirectToAction("Index");
+
+            }
+            return View();
         }
-       
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(UnavailabilityPeriod unavailabilityPeriod)
