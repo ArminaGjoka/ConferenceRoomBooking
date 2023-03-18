@@ -43,7 +43,6 @@ namespace Final_Project_Conference_Room_Booking.Controllers
             return View();
         }
 
-
         public async Task<ActionResult> Edit(int Id)
         {
 
@@ -84,17 +83,17 @@ namespace Final_Project_Conference_Room_Booking.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Edit(Booking booking)
         {
-            //if (ModelState.IsValid)
-            //{
-            await _bookingService.Edit(booking);
-            return RedirectToAction("Index");
-            //}
-            //else
-            //{
-            //    var bookings = await _conferenceRoomService.GetAllConferenceRooms();
-            //    ViewBag.RoomId = new SelectList(bookings, "Id", "Code", booking.RoomId);
-            //    return View(booking);
-            //}
+            if (ModelState.IsValid)
+            {
+                await _bookingService.Edit(booking);
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                var bookings = await _conferenceRoomService.GetAllConferenceRooms();
+                ViewBag.RoomId = new SelectList(bookings, "Id", "Code", booking.RoomId);
+                return View(booking);
+            }
         }
 
         [HttpGet]
