@@ -33,11 +33,7 @@ namespace Final_Project_Conference_Room_Booking.Controllers
             }
             return View(bookingList);
         }
-        public async Task<ActionResult> Index()
-        {
-            var bookingList = await _bookingService.GetAllTheBookings();
-            return View(bookingList);
-        }
+       
 
         public async Task<ActionResult> Create()
         {

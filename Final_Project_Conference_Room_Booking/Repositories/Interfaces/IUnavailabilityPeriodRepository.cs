@@ -4,6 +4,7 @@ namespace Final_Project_Conference_Room_Booking.Repositories.Interfaces
 {
     public interface IUnavailabilityPeriodRepository
     {
+        Task<List<UnavailabilityPeriod>> GetAllUnavailabilityPeriod(DateTime dt);
         Task<List<UnavailabilityPeriod>> GetAllUnavailabilityPeriod();
         Task<UnavailabilityPeriod> Create(UnavailabilityPeriod unavailability);
         Task<UnavailabilityPeriod> DeleteUnavailabilityPeriod(int id);

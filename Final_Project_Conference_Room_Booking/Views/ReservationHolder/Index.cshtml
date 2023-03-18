@@ -1,4 +1,5 @@
 ﻿@using System.Linq;
+@using Microsoft.AspNetCore.Identity
 @model IEnumerable<ReservationHolder>
 
 @{
@@ -9,57 +10,63 @@
 {
     <h1 class="alert-success">@TempData["ResultOk"]</h1>
 }
+@inject SignInManager<ApplicationUser> SignInManager
 
 <div class="container shadow p-5">
-
-    <div class="col mb-3">
-        <a asp-controller="ReservationHolder" asp-action="Create" class="btn btn-lg btn-primary"><i class="bi bi-file-plus-fill"></i>Add Reservation</a>
-    </div>
-    <table class="table table-bordered table-hover">
-        <thead>
-            <tr>
-                <th scope="col">CardNumber</th>
-                <th scope="col">Name</th>
-                <th scope="col">Surname</th>
-                <th scope="col">Email</th>
-                <th scope="col">PhoneNumber</th>
-                <th scope="col">Notes</th>
-
-            </tr>
-        </thead>
-        <tbody>
-
-            @foreach (var item in Model)
-            {
+    @if (!SignInManager.IsSignedIn(User))
+    {
+        <div class="col mb-3">
+            <a asp-controller="ReservationHolder" asp-action="Create" class="btn btn-lg btn-primary"><i class="bi bi-file-plus-fill"></i>Add Reservation</a>
+        </div>
+    }
+    else
+    {
+        <table class="table table-bordered table-hover">
+            <thead>
                 <tr>
-                    <td width="20%">
-                        @item.CardNumber
-                    </td>
-                    <td width="20%">
-                        @item.Name
-                    </td>
-                    <td width="20%">
-                        @item.Surname
-                    </td>
-                    <td width="20%">
-                        @item.Email
-                    </td>
-                    <td width="20%">
-                        @item.PhoneNumber
-                    </td>
-                    <td width="20%">
-                        @item.Notes
-                    </td>
+                    <th scope="col">CardNumber</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Surname</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">PhoneNumber</th>
+                    <th scope="col">Notes</th>
 
-
-                    <td>
-                        <div role="group" class="w-60 btn-group">
-                            <a asp-controller="ReservationHolder" asp-action="Edit" asp-route-id="@item.Id" class=" btn btn-sm btn-primary"><i class="bi bi-pencil-square"></i>Edit</a>&nbsp;
-                            <a asp-controller="ReservationHolder" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger"><i class="bi bi-trash-fill"></i>Delete</a>
-                        </div>
-                    </td>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td width="20%">
+                            @item.CardNumber
+                        </td>
+                        <td width="20%">
+                            @item.Name
+                        </td>
+                        <td width="20%">
+                            @item.Surname
+                        </td>
+                        <td width="20%">
+                            @item.Email
+                        </td>
+                        <td width="20%">
+                            @item.PhoneNumber
+                        </td>
+                        <td width="20%">
+                            @item.Notes
+                        </td>
+
+
+                        <td>
+                            <div role="group" class="w-60 btn-group">
+                                <a asp-controller="ReservationHolder" asp-action="Edit" asp-route-id="@item.Id" class=" btn btn-sm btn-primary"><i class="bi bi-pencil-square"></i>Edit</a>&nbsp;
+                                <a asp-controller="ReservationHolder" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger"><i class="bi bi-trash-fill"></i>Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
 </div>

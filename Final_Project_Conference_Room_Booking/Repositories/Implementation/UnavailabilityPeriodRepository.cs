@@ -14,6 +14,13 @@ namespace Final_Project_Conference_Room_Booking.Repositories.Implementation
         {
             _context = context;
         }
+        public async Task<List<UnavailabilityPeriod>> GetAllUnavailabilityPeriod(DateTime dt)
+        {
+            var result = await _context.UnavailabilityPeriods.Where(s => s.StartDate == dt).
+            ToListAsync();
+            return result;
+
+        }
         public async Task<List<UnavailabilityPeriod>> GetAllUnavailabilityPeriod()
         {
             var result = await _context.UnavailabilityPeriods.ToListAsync();

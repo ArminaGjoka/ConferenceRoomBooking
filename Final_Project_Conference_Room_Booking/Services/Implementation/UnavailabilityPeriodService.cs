@@ -13,6 +13,11 @@ public class UnavailabilityPeriodService : IUnavailabilityPeriodService
     {
         _unavailabilityPeriodRepository = unavailabilityPeriodRepository;
     }
+    public async Task<List<UnavailabilityPeriod>> GetAllUnavailabilityPeriod(DateTime data)
+    {
+        return await _unavailabilityPeriodRepository.GetAllUnavailabilityPeriod(data);
+    }
+
     public async Task<List<UnavailabilityPeriod>> GetAllUnavailabilityPeriod()
     {
         return await _unavailabilityPeriodRepository.GetAllUnavailabilityPeriod();

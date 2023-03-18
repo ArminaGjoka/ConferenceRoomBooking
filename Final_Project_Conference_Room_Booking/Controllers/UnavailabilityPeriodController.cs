@@ -16,11 +16,19 @@ namespace Final_Project_Conference_Room_Booking.Controllers
             _unavailabilityPeriodService = unavailabilityPeriodService;
             _conferenceRoomService = conferenceRoomService;
         }
-        public async Task<ActionResult> Index()
+        public async Task<ActionResult> Index(DateTime? dt)
         {
-            var result = await _unavailabilityPeriodService.GetAllUnavailabilityPeriod();
+            List<UnavailabilityPeriod> period;
 
-            return View(result);
+            if (dt == null)
+            {
+                period = await _unavailabilityPeriodService.GetAllUnavailabilityPeriod();
+            }
+            else
+            {
+                period = await _unavailabilityPeriodService.GetAllUnavailabilityPeriod((DateTime)dt);
+            }
+            return View(period);
         }
         public async Task<ActionResult> Create()
         {
