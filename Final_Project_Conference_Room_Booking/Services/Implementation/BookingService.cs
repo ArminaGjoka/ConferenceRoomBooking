@@ -50,18 +50,7 @@ namespace Final_Project_Conference_Room_Booking.Services.Implementation
 
             return true;
         }
-        //if (booking == null)
-        //{
-        //    throw new ArgumentNullException(nameof(booking), "The booking  cannot be null.");
-        //}
-
-        //var overlappingPeriod = await _context.Bookings.FirstOrDefaultAsync(up => up.RoomId == booking.RoomId
-        //                                                                             && up.StartDate < booking.EndDate
-        //                                                                             && up.EndDate > booking.StartDate);
-        //if (overlappingPeriod != null)
-        //{
-        //    throw new InvalidOperationException("The new booking overlaps with an existing one.");
-        //}
+       
         public async Task<Booking> DeleteBooking(int id)
         {
            
